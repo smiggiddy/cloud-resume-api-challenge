@@ -47,3 +47,12 @@ resource "google_service_account_iam_member" "admin-account-iam" {
   member             = "serviceAccount:${google_service_account.sa.email}"
 }
 
+resource "google_service_account_key" "cloud_resume_admin_key" {
+  service_account_id = google_service_account.myaccount.name
+  public_key_type    = "TYPE_X509_PEM_FILE"
+}
+
+resource "local_file" "sa_api_key" {
+  content  = google_service_account_key.cloud_resume_admin_key.private_key
+  filename = "${path.module}/key.json"
+}
