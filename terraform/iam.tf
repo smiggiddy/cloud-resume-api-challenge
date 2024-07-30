@@ -13,7 +13,7 @@ data "google_iam_role" "perms" {
 
 data "google_iam_policy" "admin" {
   binding {
-    role = google_project_iam_custom_role.api_role.id
+    role = google_project_iam_custom_role.api_role.name
 
     members = [
       google_service_account.sa.email,
