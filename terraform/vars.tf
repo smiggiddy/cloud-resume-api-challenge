@@ -33,7 +33,3 @@ variable "excluded_permissions" {
   default     = []
 }
 
-variable "permissions" {
-  type        = list(string)
-  description = "IAM permissions assigned to Custom Role."
-}
