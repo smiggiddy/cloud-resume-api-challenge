@@ -1,5 +1,16 @@
 # File contains manifests for Bucket and cloud function
 
+locals {
+  environment_variables = {
+    GOOGLE_APPLICATION_CREDENTIALS = google_service_account_key.cloud_resume_admin_key.private_key
+    COLLECTION_NAME                = var.collection_name
+    DATABASE_NAME                  = var.database_name
+    PROJECT_NAME                   = var.project_name
+
+  }
+
+}
+
 data "archive_file" "source" {
   type        = "zip"
   source_dir  = abspath("${path.module}/../lambda")
@@ -31,13 +42,8 @@ resource "google_cloudfunctions_function" "function" {
 
   depends_on = [google_storage_bucket_object.archive]
 
-  environment_variables = {
-    GOOGLE_APPLICATION_CREDENTIALS = google_service_account_key.cloud_resume_admin_key.private_key
-    COLLECTION_NAME                = var.collection_name
-    DATABASE_NAME                  = var.database_name
-    PROJECT_NAME                   = var.project_name
-
-  }
+  environment_variables       = local.environment_variables
+  build_environment_variables = local.environment_variables
 }
 
 # IAM entry for all users to invoke the function
