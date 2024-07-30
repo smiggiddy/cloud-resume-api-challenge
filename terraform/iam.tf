@@ -1,11 +1,31 @@
+locals {
+  names                = ["roles/firebase.admin", "roles/cloudfunctions.admin"]
+  included_permissions = concat(flatten(values(data.google_iam_role.role_permissions)[*].included_permissions))
+  permissions          = [for permission in local.included_permissions : permission]
+}
+
+
+data "google_iam_role" "firebase_admin" {
+  for_each = toset(local.names)
+  name     = each.value
+}
+
 data "google_iam_policy" "admin" {
   binding {
-    role = "roles/iam.serviceAccountUser"
+    role = google_project_iam_custom_role.api_role.id
 
     members = [
       google_service_account.sa.email,
     ]
   }
+}
+
+resource "google_project_iam_custom_role" "api_role" {
+  role_id     = "cloudResumeApiAdmin"
+  title       = "Cloud Resume API Admin"
+  description = "Allows CI to CRUD actions for API"
+  permissions = local.permissions
+
 }
 
 resource "google_service_account" "sa" {
