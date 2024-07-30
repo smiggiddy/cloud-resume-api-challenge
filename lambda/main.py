@@ -1,3 +1,4 @@
+from base64 import b64decode
 import functions_framework
 from google.auth.environment_vars import CREDENTIALS
 from google.cloud import firestore
@@ -12,7 +13,7 @@ DATABASE_NAME = os.getenv("DATABASE_NAME", "DEFAULT")
 COLLECTION_NAME = os.getenv("COLLECTION_NAME", "DEFAULT")
 GOOGLE_APPLICATION_CREDENTIALS = os.getenv("GOOGLE_APPLICATION_CREDENTIALS", "NONE")
 
-json_acct_info = loads(GOOGLE_APPLICATION_CREDENTIALS)
+json_acct_info = loads(b64decode(GOOGLE_APPLICATION_CREDENTIALS))
 credentials = service_account.Credentials.from_service_account_info(json_acct_info)
 
 db = firestore.Client(
