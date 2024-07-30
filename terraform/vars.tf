@@ -23,3 +23,11 @@ variable "service_account_email" {
 }
 
 
+variable "collection_name" {
+  default = "Resumes"
+
+}
+
+variable "database_name" {
+  default = "(default)"
+}
