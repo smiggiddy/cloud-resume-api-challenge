@@ -1,11 +1,11 @@
 locals {
   names                = ["roles/firebase.admin", "roles/cloudfunctions.admin"]
-  included_permissions = concat(flatten(values(data.google_iam_role.role_permissions)[*].included_permissions))
+  included_permissions = concat(flatten(values(data.google_iam_role.perms)[*].included_permissions))
   permissions          = [for permission in local.included_permissions : permission]
 }
 
 
-data "google_iam_role" "firebase_admin" {
+data "google_iam_role" "perms" {
   for_each = toset(local.names)
   name     = each.value
 }
