@@ -3,14 +3,16 @@ from google.auth.environment_vars import CREDENTIALS
 from google.cloud import firestore
 import os
 from uuid import uuid4
+import google.auth
+
+credentials, project = google.auth.default()
 
 PROJECT_NAME = os.getenv("PROJECT_NAME", "DEFAULT")
 DATABASE_NAME = os.getenv("DATABASE_NAME", "DEFAULT")
 COLLECTION_NAME = os.getenv("COLLECTION_NAME", "DEFAULT")
 
 db = firestore.Client(
-    project=PROJECT_NAME,
-    database=DATABASE_NAME,
+    project=PROJECT_NAME, database=DATABASE_NAME, credentials=credentials
 )
 
 
