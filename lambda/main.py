@@ -7,12 +7,10 @@ from uuid import uuid4
 PROJECT_NAME = os.getenv("PROJECT_NAME", "DEFAULT")
 DATABASE_NAME = os.getenv("DATABASE_NAME", "DEFAULT")
 COLLECTION_NAME = os.getenv("COLLECTION_NAME", "DEFAULT")
-GOOGLE_APPLICATION_CREDENTIALS = os.getenv("GOOGLE_APPLICATION_CREDENTIALS", "INVALID")
 
 db = firestore.Client(
     project=PROJECT_NAME,
     database=DATABASE_NAME,
-    credentials=GOOGLE_APPLICATION_CREDENTIALS,
 )
 
 
