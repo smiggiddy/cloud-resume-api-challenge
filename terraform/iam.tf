@@ -11,7 +11,7 @@ data "google_iam_policy" "admin" {
 resource "google_service_account" "sa" {
   account_id   = var.service_account_id
   display_name = var.service_account_display_name
-  email        = var.service_account_email
+  #email        = var.service_account_email
 }
 
 
