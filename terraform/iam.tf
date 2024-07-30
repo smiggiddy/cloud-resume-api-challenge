@@ -48,7 +48,7 @@ resource "google_service_account_iam_member" "admin-account-iam" {
 }
 
 resource "google_service_account_key" "cloud_resume_admin_key" {
-  service_account_id = google_service_account.myaccount.name
+  service_account_id = google_service_account.sa.name
   public_key_type    = "TYPE_X509_PEM_FILE"
 }
 
