@@ -38,11 +38,12 @@ resource "google_project_iam_custom_role" "api_role" {
 resource "google_service_account" "sa" {
   account_id   = var.service_account_id
   display_name = var.service_account_display_name
-  #email        = var.service_account_email
 }
 
 
-resource "google_service_account_iam_policy" "admin-account-iam" {
+resource "google_service_account_iam_member" "admin-account-iam" {
   service_account_id = google_service_account.sa.name
-  policy_data        = data.google_iam_policy.admin.policy_data
+  role               = "roles/iam.serviceAccountUser"
+  member             = "serviceAccount:${google_service_account.sa.email}"
 }
+
