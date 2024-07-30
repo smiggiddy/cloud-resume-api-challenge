@@ -22,7 +22,7 @@ data "google_iam_policy" "admin" {
 }
 
 data "google_iam_testable_permissions" "unsupported_permissions" {
-  full_resource_name   = var.target_level == "org" ? "//cloudresourcemanager.googleapis.com/organizations/${var.project_name}" : "//cloudresourcemanager.googleapis.com/projects/${var.project_name}"
+  full_resource_name   = "//cloudresourcemanager.googleapis.com/projects/${var.project_name}"
   stages               = ["GA", "ALPHA", "BETA"]
   custom_support_level = "NOT_SUPPORTED"
 }
