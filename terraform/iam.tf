@@ -1,6 +1,6 @@
 locals {
   names                = ["roles/firebase.admin", "roles/cloudfunctions.admin"]
-  excluded_permissions = concat(data.google_iam_testable_permissions.unsupported_permissions.permissions[*].name, var.excluded_permissions)
+  excluded_permissions = concat(data.google_iam_testable_permissions.unsupported_permissions.permissions[*].name)
   included_permissions = concat(flatten(values(data.google_iam_role.perms)[*].included_permissions))
   permissions          = [for permission in local.included_permissions : permission if !contains(local.excluded_permissions, permission)]
 }
@@ -23,7 +23,7 @@ data "google_iam_policy" "admin" {
 
 data "google_iam_testable_permissions" "unsupported_permissions" {
   full_resource_name   = "//cloudresourcemanager.googleapis.com/projects/${var.project_name}"
-  stages               = ["GA", "ALPHA", "BETA"]
+  stages               = ["GA", "ALPHA", "BETA", "DEPRECATED"]
   custom_support_level = "NOT_SUPPORTED"
 }
 
