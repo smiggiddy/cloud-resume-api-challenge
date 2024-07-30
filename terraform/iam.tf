@@ -1,6 +1,6 @@
 locals {
   names                = ["roles/firebase.admin", "roles/cloudfunctions.admin"]
-  excluded_permissions = concat(data.google_iam_testable_permissions.unsupported_permissions.permissions[*].name)
+  excluded_permissions = concat(data.google_iam_testable_permissions.unsupported_permissions.permissions[*].name, "resourcemanager.projects.list")
   included_permissions = concat(flatten(values(data.google_iam_role.perms)[*].included_permissions))
   permissions          = [for permission in local.included_permissions : permission if !contains(local.excluded_permissions, permission)]
 }
