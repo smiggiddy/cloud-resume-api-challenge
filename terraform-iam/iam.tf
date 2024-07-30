@@ -52,7 +52,8 @@ resource "google_service_account_key" "cloud_resume_admin_key" {
   public_key_type    = "TYPE_X509_PEM_FILE"
 }
 
-resource "local_file" "sa_api_key" {
-  content  = google_service_account_key.cloud_resume_admin_key.private_key
-  filename = "${path.module}/key.json"
+resource "local_sensitive_file" "sa_api_key" {
+  content         = google_service_account_key.cloud_resume_admin_key.private_key
+  filename        = "${path.module}/key.json"
+  file_permission = "0600"
 }
