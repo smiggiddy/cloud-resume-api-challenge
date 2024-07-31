@@ -1,50 +1,74 @@
-from base64 import b64decode
+import flask
 import functions_framework
-import google.auth
 from google.cloud import firestore
-from json import loads, dumps
 import os
 from uuid import uuid4
-from google.oauth2 import service_account
 
 
 PROJECT_NAME = os.getenv("PROJECT_NAME", "DEFAULT")
 DATABASE_NAME = os.getenv("DATABASE_NAME", "DEFAULT")
 COLLECTION_NAME = os.getenv("COLLECTION_NAME", "DEFAULT")
 
-# b64_json_credentials, _ = google.auth.default()
+
+class Resumes:
+    def __init__(self, project, db_name) -> None:
+        self.db = firestore.Client(project=project, database=db_name)
+
+    def random_uuid(self):
+        """
+        return str: random UUID
+        """
+        return str(uuid4())
+
+    def add_document(self, data):
+        """
+        return bool: True if successful upload. False if an issue
+        """
+
+        document_id = self.random_uuid()
+
+        try:
+            self.db.collection(COLLECTION_NAME).document(document_id).set(data)
+            return True
+        except:
+            return False
+
+    def get_resumes(self):
+        """
+        return list: of resume data
+        """
+
+        try:
+            resumes = self.db.collection(COLLECTION_NAME).stream()
+
+            return flask.jsonify(resumes), 200
+
+        except:
+            return flask.jsonify({"error": "no resumes found"}), 404
 
 
-# GOOGLE_APPLICATION_CREDENTIALS = os.getenv("GOOGLE_APPLICATION_CREDENTIALS", "NONE")
-
-# json_acct_info = loads(b64decode(b64_json_credentials))
-
-db = firestore.Client(project=PROJECT_NAME, database=DATABASE_NAME)
-
-
-def random_uuid():
-    """
-    return str: random UUID
-    """
-    return str(uuid4())
-
-
-def add_document(data):
-    """
-    return bool: True if successful upload. False if an issue
-    """
-
-    document_id = random_uuid()
-
-    try:
-        db.collection(COLLECTION_NAME).document(document_id).set(data)
-        return True
-    except:
-        return False
+try:
+    resumes = Resumes(project=PROJECT_NAME, db_name=DATABASE_NAME)
+except:
+    pass
 
 
 @functions_framework.http
-def http_handler(request):
+def http_handler(request: flask.request) -> flask.typing.ResponseReturnValue:
 
-    # Return an HTTP response
-    return dumps({"status": "OK"})
+    match request.method:
+        case "GET":
+            return flask.jsonify({"status": "OK"}), 200
+        case "POST":
+            if resumes.add_document(request):
+                return (
+                    flask.jsonify({"success": "resume added into the collection"}),
+                    200,
+                )
+            else:
+                return (
+                    flask.jsonify({"error": "unable to add resume to the collection."}),
+                    401,
+                )
+        case _:
+            return flask.jsonify({"error": "client error"}), 400
