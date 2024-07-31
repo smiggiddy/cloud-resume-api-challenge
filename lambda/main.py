@@ -12,16 +12,15 @@ PROJECT_NAME = os.getenv("PROJECT_NAME", "DEFAULT")
 DATABASE_NAME = os.getenv("DATABASE_NAME", "DEFAULT")
 COLLECTION_NAME = os.getenv("COLLECTION_NAME", "DEFAULT")
 
-credentials = google.auth.default()
+b64_json_credentials, _ = google.auth.default()
 
 
 # GOOGLE_APPLICATION_CREDENTIALS = os.getenv("GOOGLE_APPLICATION_CREDENTIALS", "NONE")
 
-# json_acct_info = loads(b64decode(GOOGLE_APPLICATION_CREDENTIALS))
-# credentials = service_account.Credentials.from_service_account_info(json_acct_info)
+json_acct_info = loads(b64decode(b64_json_credentials))
 
 db = firestore.Client(
-    project=PROJECT_NAME, database=DATABASE_NAME, credentials=credentials
+    project=PROJECT_NAME, database=DATABASE_NAME, credentials=json_acct_info
 )
 
 
