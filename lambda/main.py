@@ -2,7 +2,6 @@ import flask
 from flask.json import jsonify
 import functions_framework
 from google.cloud import firestore
-from google.oauth2 import service_account
 import os
 from uuid import uuid4
 
@@ -11,15 +10,10 @@ PROJECT_NAME = os.getenv("PROJECT_NAME", "DEFAULT")
 DATABASE_NAME = os.getenv("DATABASE_NAME", "DEFAULT")
 COLLECTION_NAME = os.getenv("COLLECTION_NAME", "DEFAULT")
 
-creds = os.environ.get("GOOGLE_APPLICATION_CREDENTIALS")
-credentials = service_account.Credentials.from_service_account_file(creds)
-
 
 class Resumes:
     def __init__(self, project, db_name) -> None:
-        self.db = firestore.Client(
-            project=project, database=db_name, credentials=credentials
-        )
+        self.db = firestore.Client(project=project, database=db_name)
 
     def random_uuid(self):
         """
