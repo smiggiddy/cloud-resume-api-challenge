@@ -56,19 +56,20 @@ except:
 @functions_framework.http
 def http_handler(request: flask.Request) -> flask.typing.ResponseReturnValue:
 
-    match request.method:
-        case "GET":
-            return flask.jsonify({"status": "OK"}), 200
-        case "POST":
-            if resumes.add_document(request):
-                return (
-                    flask.jsonify({"success": "resume added into the collection"}),
-                    200,
-                )
-            else:
-                return (
-                    flask.jsonify({"error": "unable to add resume to the collection."}),
-                    401,
-                )
-        case _:
-            return flask.jsonify({"error": "client error"}), 400
+    if request.method == "GET":
+        return flask.jsonify({"status": "OK"}), 200
+
+    elif request.method == "POST":
+        if resumes.add_document(request):
+            return (
+                flask.jsonify({"success": "resume added into the collection"}),
+                200,
+            )
+        else:
+            return (
+                flask.jsonify({"error": "unable to add resume to the collection."}),
+                401,
+            )
+
+    # default catch all
+    return flask.jsonify({"error": "client error"}), 400
