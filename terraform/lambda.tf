@@ -62,6 +62,10 @@ resource "google_cloudfunctions_function_iam_member" "invoker" {
   member = "allUsers"
 
   depends_on = [google_cloudfunctions_function.function]
+
+  lifecycle {
+    replace_triggered_by = [google_cloudfunctions_function.function]
+  }
 }
 
 output "http_endpoint" {
