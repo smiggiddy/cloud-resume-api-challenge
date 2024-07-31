@@ -18,17 +18,17 @@ class Resumes:
 
     def random_uuid(self):
         """
-        return str: random UUID
+        return str: unique random UUID for each record that will be entered into the Obj database
         """
         return str(uuid4())
 
-    def valid_json(self, request: flask.Request):
+    def check_content_type(self, request: flask.Request):
         return request.content_type == "application/json"
 
     def check_token(self, token):
         return token == TOKEN
 
-    def add_document(self, data):
+    def add_resume(self, data):
         """
         return bool: True if successful upload. False if an issue
         """
@@ -41,7 +41,7 @@ class Resumes:
         except:
             return False
 
-    def get_resumes(self):
+    def fetch_all_resumes(self):
         """
         return list: of resume data
         """
@@ -57,9 +57,11 @@ class Resumes:
 
     def post_handler(self, data):
         """
-        returns: json payload matching the purposed action
+        function handles the uploads the resume JSON payload to the database
+
+        returns: response + JSON matching the purposed action
         """
-        if self.add_document(data):
+        if self.add_resume(data):
             return (
                 flask.jsonify({"success": "resume added into the collection"}),
                 200,
@@ -82,20 +84,20 @@ def http_handler(request: flask.Request) -> flask.typing.ResponseReturnValue:
 
     match request.method:
         case "GET":
-            data = resumes.get_resumes()
+            data = resumes.fetch_all_resumes()
             return data
             # return flask.jsonify({"status": "OK"}), 200
 
         case "POST":
             # fail immediately if the content type is not json
-            if not resumes.valid_json(request):
+            if not resumes.check_content_type(request):
                 return (
                     flask.jsonify({"error": "content type must be application/json"}),
                     406,
                 )
 
-            # Simple Auth to protect the POST method from spam
-            if not resumes.check_token(request.headers["resume-token"]):
+            # Simple Auth to protect the POST method from abuse
+            if not resumes.check_token(request.headers.get("resume-token")):
                 return flask.jsonify({"error": "unauthorized"}), 401
 
             data = request.get_json()
