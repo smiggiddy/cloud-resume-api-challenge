@@ -71,5 +71,6 @@ def http_handler(request: flask.Request) -> flask.typing.ResponseReturnValue:
                 401,
             )
 
-    # default catch all
-    return flask.jsonify({"error": "client error"}), 400
+    else:
+        # default catch all
+        return flask.jsonify({"error": "client error"}), 400
