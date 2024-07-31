@@ -47,6 +47,15 @@ resource "google_service_account_iam_member" "admin-account-iam" {
   member             = "serviceAccount:${google_service_account.sa.email}"
 }
 
+resource "google_service_account_iam_binding" "admin-account-iam" {
+  service_account_id = google_service_account.sa.name
+  role               = google_project_iam_custom_role.api_role.name
+
+  members = [
+    google_service_account.sa.email,
+  ]
+}
+
 resource "google_service_account_key" "cloud_resume_admin_key" {
   service_account_id = google_service_account.sa.name
   public_key_type    = "TYPE_X509_PEM_FILE"

@@ -34,7 +34,9 @@ class Resumes:
         try:
             self.db.collection(COLLECTION_NAME).document(document_id).set(data)
             return True
-        except:
+        except Exception as e:
+            print(e)
+
             return False
 
     def get_resumes(self):
