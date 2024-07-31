@@ -35,3 +35,11 @@ variable "database_name" {
 variable "python_api_token" {
 
 }
+
+variable "secret_key_s3" {
+
+}
+
+variable "access_key_s3" {
+
+}

@@ -39,13 +39,6 @@ resource "google_service_account" "sa" {
   display_name = var.service_account_display_name
 }
 
-
-#resource "google_service_account_iam_member" "admin-account-iam" {
-#  service_account_id = google_service_account.sa.name
-#  role               = "projects/${var.project_name}/roles/${google_project_iam_custom_role.api_role.role_id}"
-#  member             = "serviceAccount:${google_service_account.sa.email}"
-#}
-
 resource "google_service_account_iam_binding" "admin-account-iam" {
   service_account_id = google_service_account.sa.name
   role               = google_project_iam_custom_role.api_role.name

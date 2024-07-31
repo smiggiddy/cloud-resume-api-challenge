@@ -1,20 +1,39 @@
 name: Tofu Plan
+
 on:
-  push:
-    branches: [main]
+  workflow_call:
+    secrets:
+      ACCESS_KEY_S3:
+        required: true
+      SECRET_KEY_S3:
+        required: true
+
+  
 
 defaults:
   run:
-    working-directory: ${{ env.tf_actions_working_dir }}
-permissions:
-  pull-requests: write
+    working-directory: terraform
+
+
 
 jobs:
   prep:
+    permissions:
+      contents: 'read'
+      id-token: 'write'
     runs-on: ubuntu-latest
+    environment: prod
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+
+      - id: 'auth'
+        name: 'Authenticate to Google Cloud'
+        uses: 'google-github-actions/auth@v2'
+        with:
+          workload_identity_provider: projects/623321734192/locations/global/workloadIdentityPools/github-pool/providers/github-gcp-provider-for-real
+          service_account: 'gh-actions@lucid-box-430922-j7.iam.gserviceaccount.com'
+          project_id: 'lucid-box-430922-j7'
 
       - name: Setup Tofu
         uses: opentofu/setup-opentofu@v1
@@ -27,6 +46,9 @@ jobs:
       - name: OpenTofu Init
         id: init
         run: tofu init
+        env:
+          TF_VAR_secret_key_s3: ${{ secrets.SECRET_KEY_S3 }}
+          TF_VAR_access_key_s3: ${{ secrets.ACCESS_KEY_S3 }}
 
       - name: OpenTofu Validate
         id: validate
@@ -36,3 +58,16 @@ jobs:
         id: plan
         run: tofu plan -no-color
         continue-on-error: true
+        env:
+          TF_VAR_zone_name: ${{ vars.TF_VAR_ZONE_NAME }}
+          TF_VAR_region: ${{ vars.TF_VAR_REGION }}
+          TF_VAR_project_name: ${{ vars.TF_VAR_PROJECT_NAME }}
+          TF_VAR_service_account_id: ${{ vars.TF_VAR_SERVICE_ACCOUNT_ID }}
+          TF_VAR_service_account_display_name: ${{ vars.TF_VAR_SERVICE_ACCOUNT_DISPLAY_NAME }}
+          TF_VAR_service_account_email: ${{ vars.TF_VAR_SERVICE_ACCOUNT_EMAIL }}
+          TF_VAR_python_api_token: '${{ secrets.TF_VAR_PYTHON_API_TOKEN }}'
+          TF_VAR_secret_key_s3: '${{ secrets.SECRET_KEY_S3 }}'
+          TF_VAR_access_key_s3: '${{ secrets.ACCESS_KEY_S3 }}'
+
+
+

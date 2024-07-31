@@ -1,8 +1,14 @@
- CD For Cloud Resume API
+name: "CD For Cloud Resume API"
+
 on:
   push:
-    branches: [main]
+    branches: 
+    - main
+  workflow_dispatch:
 
 jobs:
   tofu-plan:
-    uses: ./github/workflows/tofu-plan.yml
+    uses: ./.github/workflows/tofu-plan.yml
+    secrets:
+      SECRET_KEY_S3: ${{ secrets.SECRET_KEY_S3 }}
+      ACCESS_KEY_S3: ${{ secrets.ACCESS_KEY_S3 }}
