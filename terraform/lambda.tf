@@ -5,7 +5,6 @@ locals {
     COLLECTION_NAME = var.collection_name
     DATABASE_NAME   = var.database_name
     PROJECT_NAME    = var.project_name
-
   }
 
 }
