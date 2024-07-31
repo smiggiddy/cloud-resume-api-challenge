@@ -54,7 +54,7 @@ except:
 
 
 @functions_framework.http
-def http_handler(request: flask.request) -> flask.typing.ResponseReturnValue:
+def http_handler(request: flask.Request) -> flask.typing.ResponseReturnValue:
 
     match request.method:
         case "GET":
