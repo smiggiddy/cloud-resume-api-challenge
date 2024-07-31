@@ -2,10 +2,9 @@
 
 locals {
   environment_variables = {
-    GOOGLE_APPLICATION_CREDENTIALS = google_service_account_key.cloud_resume_admin_key.private_key
-    COLLECTION_NAME                = var.collection_name
-    DATABASE_NAME                  = var.database_name
-    PROJECT_NAME                   = var.project_name
+    COLLECTION_NAME = var.collection_name
+    DATABASE_NAME   = var.database_name
+    PROJECT_NAME    = var.project_name
 
   }
 

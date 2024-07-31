@@ -12,16 +12,14 @@ PROJECT_NAME = os.getenv("PROJECT_NAME", "DEFAULT")
 DATABASE_NAME = os.getenv("DATABASE_NAME", "DEFAULT")
 COLLECTION_NAME = os.getenv("COLLECTION_NAME", "DEFAULT")
 
-b64_json_credentials, _ = google.auth.default()
+# b64_json_credentials, _ = google.auth.default()
 
 
 # GOOGLE_APPLICATION_CREDENTIALS = os.getenv("GOOGLE_APPLICATION_CREDENTIALS", "NONE")
 
-json_acct_info = loads(b64decode(b64_json_credentials))
+# json_acct_info = loads(b64decode(b64_json_credentials))
 
-db = firestore.Client(
-    project=PROJECT_NAME, database=DATABASE_NAME, credentials=json_acct_info
-)
+db = firestore.Client(project=PROJECT_NAME, database=DATABASE_NAME)
 
 
 def random_uuid():
