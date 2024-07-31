@@ -30,7 +30,7 @@ resource "google_storage_bucket_object" "archive" {
 resource "google_cloudfunctions_function" "function" {
   name        = "cloudResumeApi"
   description = "Cloud Resume API handler Function"
-  runtime     = "python39"
+  runtime     = "python312"
 
   available_memory_mb   = 128
   source_archive_bucket = google_storage_bucket.bucket.name
@@ -45,6 +45,7 @@ resource "google_cloudfunctions_function" "function" {
 
   # Attach service account to the function
   service_account_email = google_service_account.sa.email
+  build_service_account = google_service_account.sa.email
 
   lifecycle {
     replace_triggered_by = [google_storage_bucket_object.archive]

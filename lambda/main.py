@@ -10,6 +10,9 @@ PROJECT_NAME = os.getenv("PROJECT_NAME", "DEFAULT")
 DATABASE_NAME = os.getenv("DATABASE_NAME", "DEFAULT")
 COLLECTION_NAME = os.getenv("COLLECTION_NAME", "DEFAULT")
 
+creds = os.environ.get("GOOGLE_APPLICATION_CREDENTIALS")
+print(creds)
+
 
 class Resumes:
     def __init__(self, project, db_name) -> None:
@@ -61,31 +64,32 @@ except:
 @functions_framework.http
 def http_handler(request: flask.Request) -> flask.typing.ResponseReturnValue:
 
-    if request.method == "GET":
-        data = resumes.get_resumes()
-        return data
-        # return flask.jsonify({"status": "OK"}), 200
+    match request.method:
+        case "GET":
+            data = resumes.get_resumes()
+            return data
+            # return flask.jsonify({"status": "OK"}), 200
 
-    elif request.method == "POST":
-        # fail immediately if the content type is not json
-        if not resumes.valid_json(request):
-            return (
-                flask.jsonify({"error": "content type must be application/json"}),
-                406,
-            )
+        case "POST":
+            # fail immediately if the content type is not json
+            if not resumes.valid_json(request):
+                return (
+                    flask.jsonify({"error": "content type must be application/json"}),
+                    406,
+                )
 
-        data = request.get_json()
-        if resumes.add_document(data):
-            return (
-                flask.jsonify({"success": "resume added into the collection"}),
-                200,
-            )
-        else:
-            return (
-                flask.jsonify({"error": "unable to add resume to the collection."}),
-                401,
-            )
+            data = request.get_json()
+            if resumes.add_document(data):
+                return (
+                    flask.jsonify({"success": "resume added into the collection"}),
+                    200,
+                )
+            else:
+                return (
+                    flask.jsonify({"error": "unable to add resume to the collection."}),
+                    401,
+                )
 
-    else:
-        # default catch all
-        return flask.jsonify({"error": "client error"}), 400
+        case _:
+            # default catch all
+            return flask.jsonify({"error": "client error"}), 400
