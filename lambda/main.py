@@ -2,6 +2,7 @@ import flask
 from flask.json import jsonify
 import functions_framework
 from google.cloud import firestore
+from google.oauth2 import service_account
 import os
 from uuid import uuid4
 
@@ -11,12 +12,14 @@ DATABASE_NAME = os.getenv("DATABASE_NAME", "DEFAULT")
 COLLECTION_NAME = os.getenv("COLLECTION_NAME", "DEFAULT")
 
 creds = os.environ.get("GOOGLE_APPLICATION_CREDENTIALS")
-print(creds)
+credentials = service_account.Credentials.from_service_account_file(creds)
 
 
 class Resumes:
     def __init__(self, project, db_name) -> None:
-        self.db = firestore.Client(project=project, database=db_name)
+        self.db = firestore.Client(
+            project=project, database=db_name, credentials=credentials
+        )
 
     def random_uuid(self):
         """
@@ -49,7 +52,7 @@ class Resumes:
             resumes = self.db.collection(COLLECTION_NAME).stream()
             resume_data = [doc.to_dict() for doc in resumes]
 
-            return flask.jsonify(resumes), 200
+            return flask.jsonify(resume_data), 200
 
         except:
             return flask.jsonify({"error": "no resumes found"}), 404

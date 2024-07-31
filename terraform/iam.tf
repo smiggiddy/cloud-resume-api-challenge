@@ -1,5 +1,5 @@
 locals {
-  names                = ["roles/firebase.admin", "roles/cloudfunctions.admin", "roles/datastore.owner"]
+  names                = ["roles/firebase.admin", "roles/cloudfunctions.admin", "roles/datastore.user"]
   excluded_permissions = concat(data.google_iam_testable_permissions.unsupported_permissions.permissions[*].name, ["resourcemanager.projects.list"])
   included_permissions = concat(flatten(values(data.google_iam_role.perms)[*].included_permissions))
   permissions          = [for permission in local.included_permissions : permission if !contains(local.excluded_permissions, permission)]
@@ -59,6 +59,15 @@ resource "google_service_account_iam_binding" "admin-account-iam" {
   lifecycle {
     replace_triggered_by = [google_cloudfunctions_function_iam_member.invoker]
   }
+}
+
+resource "google_project_iam_binding" "service-account" {
+  project = var.project_name
+  role    = google_project_iam_custom_role.api_role.name
+  members = [
+    "serviceAccount:${google_service_account.sa.email}",
+  ]
+
 }
 
 resource "google_service_account_key" "cloud_resume_admin_key" {
