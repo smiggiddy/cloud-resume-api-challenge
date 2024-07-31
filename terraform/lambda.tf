@@ -44,6 +44,9 @@ resource "google_cloudfunctions_function" "function" {
 
   environment_variables       = local.environment_variables
   build_environment_variables = local.environment_variables
+
+  # Attach service account to the function
+  service_account_email = google_service_account.sa.email
 }
 
 # IAM entry for all users to invoke the function
