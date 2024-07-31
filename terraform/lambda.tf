@@ -45,7 +45,6 @@ resource "google_cloudfunctions_function" "function" {
 
   # Attach service account to the function
   service_account_email = google_service_account.sa.email
-  build_service_account = google_service_account.sa.email
 
   lifecycle {
     replace_triggered_by = [google_storage_bucket_object.archive]
