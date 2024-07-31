@@ -34,9 +34,7 @@ class Resumes:
         try:
             self.db.collection(COLLECTION_NAME).document(document_id).set(data)
             return True
-        except Exception as e:
-            print(e)
-
+        except:
             return False
 
     def get_resumes(self):
@@ -46,6 +44,7 @@ class Resumes:
 
         try:
             resumes = self.db.collection(COLLECTION_NAME).stream()
+            resume_data = [doc.to_dict() for doc in resumes]
 
             return flask.jsonify(resumes), 200
 
@@ -63,7 +62,9 @@ except:
 def http_handler(request: flask.Request) -> flask.typing.ResponseReturnValue:
 
     if request.method == "GET":
-        return flask.jsonify({"status": "OK"}), 200
+        data = resumes.get_resumes()
+        return data
+        # return flask.jsonify({"status": "OK"}), 200
 
     elif request.method == "POST":
         # fail immediately if the content type is not json
