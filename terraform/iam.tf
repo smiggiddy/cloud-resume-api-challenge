@@ -52,7 +52,7 @@ resource "google_service_account_iam_binding" "admin-account-iam" {
   role               = google_project_iam_custom_role.api_role.name
 
   members = [
-    google_service_account.sa.email,
+    google_service_account.sa.name,
   ]
 }
 
