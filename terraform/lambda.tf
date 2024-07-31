@@ -22,9 +22,9 @@ resource "google_storage_bucket" "bucket" {
 }
 
 resource "google_storage_bucket_object" "archive" {
-  name       = "index.zip"
+  name       = "resume-app.zip"
   bucket     = google_storage_bucket.bucket.name
-  source     = abspath("${path.module}/../lambda/function.zip")
+  source     = data.archive_file.source.output_path
   depends_on = [google_storage_bucket.bucket, data.archive_file.source]
 }
 
@@ -46,6 +46,10 @@ resource "google_cloudfunctions_function" "function" {
 
   # Attach service account to the function
   service_account_email = google_service_account.sa.email
+
+  lifecycle {
+    replace_triggered_by = [google_storage_bucket_object.archive]
+  }
 }
 
 # IAM entry for all users to invoke the function
