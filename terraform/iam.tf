@@ -32,7 +32,6 @@ resource "google_project_iam_custom_role" "api_role" {
   title       = "Cloud Resume API Admin"
   description = "Allows CI to CRUD actions for API"
   permissions = local.permissions
-
 }
 
 resource "google_service_account" "sa" {
@@ -54,6 +53,12 @@ resource "google_service_account_iam_binding" "admin-account-iam" {
   members = [
     "serviceAccount:${google_service_account.sa.email}",
   ]
+
+  depends_on = [google_cloudfunctions_function.function, google_cloudfunctions_function_iam_member.invoker]
+
+  lifecycle {
+    replace_triggered_by = [google_cloudfunctions_function_iam_member.invoker]
+  }
 }
 
 resource "google_service_account_key" "cloud_resume_admin_key" {
