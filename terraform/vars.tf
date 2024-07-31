@@ -31,3 +31,7 @@ variable "collection_name" {
 variable "database_name" {
   default = "(default)"
 }
+
+variable "python_api_token" {
+
+}

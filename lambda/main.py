@@ -9,6 +9,7 @@ from uuid import uuid4
 PROJECT_NAME = os.getenv("PROJECT_NAME", "DEFAULT")
 DATABASE_NAME = os.getenv("DATABASE_NAME", "DEFAULT")
 COLLECTION_NAME = os.getenv("COLLECTION_NAME", "DEFAULT")
+TOKEN = os.getenv("TOKEN", "")
 
 
 class Resumes:
@@ -23,6 +24,9 @@ class Resumes:
 
     def valid_json(self, request: flask.Request):
         return request.content_type == "application/json"
+
+    def check_token(self, token):
+        return token == TOKEN
 
     def add_document(self, data):
         """
@@ -51,6 +55,21 @@ class Resumes:
         except:
             return flask.jsonify({"error": "no resumes found"}), 404
 
+    def post_handler(self, data):
+        """
+        returns: json payload matching the purposed action
+        """
+        if self.add_document(data):
+            return (
+                flask.jsonify({"success": "resume added into the collection"}),
+                200,
+            )
+        else:
+            return (
+                flask.jsonify({"error": "unable to add resume to the collection."}),
+                401,
+            )
+
 
 try:
     resumes = Resumes(project=PROJECT_NAME, db_name=DATABASE_NAME)
@@ -75,17 +94,12 @@ def http_handler(request: flask.Request) -> flask.typing.ResponseReturnValue:
                     406,
                 )
 
+            # Simple Auth to protect the POST method from spam
+            if not resumes.check_token(request.headers["resume-token"]):
+                return flask.jsonify({"error": "unauthorized"}), 401
+
             data = request.get_json()
-            if resumes.add_document(data):
-                return (
-                    flask.jsonify({"success": "resume added into the collection"}),
-                    200,
-                )
-            else:
-                return (
-                    flask.jsonify({"error": "unable to add resume to the collection."}),
-                    401,
-                )
+            return resumes.post_handler(data)
 
         case _:
             # default catch all
