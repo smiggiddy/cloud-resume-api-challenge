@@ -1,4 +1,5 @@
 import flask
+from flask.json import jsonify
 import functions_framework
 from google.cloud import firestore
 import os
@@ -19,6 +20,9 @@ class Resumes:
         return str: random UUID
         """
         return str(uuid4())
+
+    def valid_json(self, request: flask.Request):
+        return request.content_type == "application/json"
 
     def add_document(self, data):
         """
@@ -60,7 +64,15 @@ def http_handler(request: flask.Request) -> flask.typing.ResponseReturnValue:
         return flask.jsonify({"status": "OK"}), 200
 
     elif request.method == "POST":
-        if resumes.add_document(request):
+        # fail immediately if the content type is not json
+        if not resumes.valid_json(request):
+            return (
+                flask.jsonify({"error": "content type must be application/json"}),
+                406,
+            )
+
+        data = request.get_json()
+        if resumes.add_document(data):
             return (
                 flask.jsonify({"success": "resume added into the collection"}),
                 200,
