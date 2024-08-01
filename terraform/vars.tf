@@ -33,13 +33,16 @@ variable "database_name" {
 }
 
 variable "python_api_token" {
-  sensitive = true
+  sensitive   = true
+  description = "For use with the API"
 }
 
 variable "secret_key_s3" {
-
+  sensitive   = true
+  description = "For use with S3 Backend"
 }
 
 variable "access_key_s3" {
-
+  sensitive   = true
+  description = "For use with S3 Backend"
 }
