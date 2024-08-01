@@ -33,7 +33,7 @@ variable "database_name" {
 }
 
 variable "python_api_token" {
-
+  sensitive = true
 }
 
 variable "secret_key_s3" {
